@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "van-button": "@vant/weapp/button/index"
+  },
+  "navigationBarTitleText": "AI短文记单词"
+}

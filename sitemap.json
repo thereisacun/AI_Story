@@ -1,0 +1,9 @@
+{
+  "desc": "关于本小程序文件的索引，说明此文件的用途",
+  "list": [
+    { "path": "pages/index/index", "desc": "首页：分类选择、短文列表、AI生成入口" },
+    { "path": "pages/read/index", "desc": "阅读页：短文展示、模式切换、收藏" },
+    { "path": "pages/generate/index", "desc": "AI生成页：选分类+输入主题→生成故事" },
+    { "path": "pages/my/index", "desc": "我的页：进度、收藏、会员状态、激活码" }
+  ]
+}

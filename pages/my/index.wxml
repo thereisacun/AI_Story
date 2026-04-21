@@ -1,0 +1,77 @@
+<!-- pages/my/index.wxml -->
+<view class="container">
+  <!-- 会员状态卡片 -->
+  <view class="member-card">
+    <view class="member-header">
+      <text class="member-title">会员状态</text>
+      <text class="member-badge {{memberStatus ? memberStatus.type : 'free'}}">
+        {{memberStatus ? (memberStatus.type === 'free' ? '免费' : memberStatus.type) : '未激活'}}
+      </text>
+    </view>
+    <view class="member-info" wx:if="{{memberStatus && memberStatus.type !== 'free'}}">
+      <text class="member-expire">到期时间: {{formatDate(memberStatus.expireTime)}}</text>
+    </view>
+    <view class="member-tip" wx:else>
+      <text>激活会员，解锁无限AI生成</text>
+    </view>
+  </view>
+
+  <!-- 激活码区域 -->
+  <view class="activate-section">
+    <view class="section-title">激活码兑换</view>
+    <view class="activate-form">
+      <input
+        class="cdk-input"
+        placeholder="请输入激活码"
+        value="{{cdkInput}}"
+        bindinput="onCDKInput"
+      />
+      <button
+        class="activate-btn"
+        bindtap="onActivateTap"
+        loading="{{activating}}"
+      >
+        立即激活
+      </button>
+    </view>
+  </view>
+
+  <!-- 会员权益 -->
+  <view class="benefits-section">
+    <view class="section-title">会员权益</view>
+    <view class="benefits-list">
+      <view class="benefit-item">
+        <text class="benefit-type">月卡</text>
+        <text class="benefit-desc">30天 · 每天50次AI生成</text>
+      </view>
+      <view class="benefit-item">
+        <text class="benefit-type">季卡</text>
+        <text class="benefit-desc">90天 · 每天150次AI生成</text>
+      </view>
+      <view class="benefit-item">
+        <text class="benefit-type">年卡</text>
+        <text class="benefit-desc">365天 · 每天365次AI生成</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view class="favorites-section">
+    <view class="section-title">我的收藏 ({{favorites.length}})</view>
+    <view wx:if="{{favorites.length > 0}}" class="favorites-list">
+      <view
+        wx:for="{{favorites}}"
+        wx:key="_id"
+        class="favorite-item"
+        bindtap="onArticleTap"
+        data-id="{{item.articleId}}"
+      >
+        <text class="favorite-title">{{item.articleId}}</text>
+        <text class="favorite-arrow">›</text>
+      </view>
+    </view>
+    <view wx:else class="empty-tip">
+      <text>暂无收藏内容</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,16 @@
+node_modules/
+.DS_Store
+*.log
+dist/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+package-lock.json
+yun/
+.cloudbaserc
+.env
+.vscode/
+components/vant-weapp/

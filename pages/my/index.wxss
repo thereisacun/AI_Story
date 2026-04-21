@@ -1,0 +1,152 @@
+/* pages/my/index.wxss */
+
+.member-card {
+  background: linear-gradient(135deg, #3CAB6E, #2d8a54);
+  border-radius: 16rpx;
+  padding: 32rpx 24rpx;
+  color: #fff;
+  margin-bottom: 24rpx;
+}
+
+.member-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.member-title {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.member-badge {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.member-info {
+  margin-top: 12rpx;
+}
+
+.member-expire {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.member-tip {
+  font-size: 26rpx;
+  opacity: 0.8;
+}
+
+.activate-section {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.activate-form {
+  display: flex;
+  gap: 16rpx;
+}
+
+.cdk-input {
+  flex: 1;
+  padding: 20rpx 16rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.activate-btn {
+  padding: 20rpx 32rpx;
+  background: #3CAB6E;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 8rpx;
+  border: none;
+  white-space: nowrap;
+}
+
+.benefits-section {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.benefit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx;
+  background: #f9f9f9;
+  border-radius: 8rpx;
+}
+
+.benefit-type {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.benefit-desc {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.favorites-section {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.favorite-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.favorite-item:last-child {
+  border-bottom: none;
+}
+
+.favorite-title {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.favorite-arrow {
+  font-size: 36rpx;
+  color: #ccc;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 32rpx;
+  color: #999;
+  font-size: 26rpx;
+}

@@ -1,0 +1,71 @@
+<!-- pages/generate/index.wxml -->
+<view class="container">
+  <!-- 配额提示 -->
+  <view class="quota-bar">
+    <text class="quota-text">今日剩余次数: {{quota ? quota.remaining : '--'}}</text>
+  </view>
+
+  <!-- 分类选择 -->
+  <view class="section">
+    <view class="section-title">选择分类</view>
+    <view class="category-list">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="category-item {{selectedCategory === item.id ? 'active' : ''}}"
+        bindtap="onCategoryTap"
+        data-category="{{item.id}}"
+      >
+        <text class="category-icon">{{item.icon}}</text>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主题输入 -->
+  <view class="section">
+    <view class="section-title">输入主题</view>
+    <view class="topic-input">
+      <input
+        class="input"
+        placeholder="例如：穿越到秦朝的现代人"
+        value="{{topic}}"
+        bindinput="onTopicInput"
+        disabled="{{generating}}"
+      />
+    </view>
+  </view>
+
+  <!-- 生成按钮 -->
+  <view class="section">
+    <button
+      class="generate-btn {{generating ? 'loading' : ''}}"
+      bindtap="{{generating ? 'onCancelTap' : 'onGenerateTap'}}"
+      disabled="{{!selectedCategory || !topic.trim()}}"
+    >
+      <text wx:if="{{generating}}">取消生成</text>
+      <text wx:else>✨ 开始生成</text>
+    </button>
+  </view>
+
+  <!-- 错误提示 -->
+  <view wx:if="{{error}}" class="error-tip">
+    <text>{{error}}</text>
+  </view>
+
+  <!-- 生成结果预览 -->
+  <view wx:if="{{generatedContent}}" class="result-section">
+    <view class="section-title">生成预览</view>
+    <view class="result-content">
+      <text class="result-text">{{generatedContent}}</text>
+    </view>
+    <button class="view-btn" bindtap="onViewResultTap">
+      在阅读页查看
+    </button>
+  </view>
+
+  <!-- 生成中状态 -->
+  <view wx:if="{{generating}}" class="generating-tip">
+    <text>AI正在努力创作中，请稍候...</text>
+  </view>
+</view>

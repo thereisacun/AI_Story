@@ -1,0 +1,133 @@
+/* pages/read/index.wxss */
+
+.loading, .empty {
+  text-align: center;
+  padding: 200rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.article-content {
+  padding-bottom: 120rpx;
+}
+
+.article-header {
+  padding: 32rpx 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.article-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.article-meta {
+  display: flex;
+  gap: 24rpx;
+}
+
+.article-words, .article-category {
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* 模式切换 */
+.mode-switch {
+  display: flex;
+  padding: 24rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mode-btn {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-radius: 8rpx;
+  background: #f5f5f5;
+  margin: 0 8rpx;
+}
+
+.mode-btn.active {
+  background: #3CAB6E;
+  color: #fff;
+}
+
+/* 正文 */
+.article-body {
+  padding: 32rpx 24rpx;
+  background: #fff;
+  min-height: 400rpx;
+}
+
+.article-text {
+  font-size: 32rpx;
+  line-height: 1.8;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+/* 底部操作栏 */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: #fff;
+  padding: 16rpx 32rpx;
+  padding-bottom: calc(16rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.08);
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 0;
+}
+
+.action-btn::after {
+  content: '';
+  width: 1rpx;
+  height: 100%;
+  background: #f0f0f0;
+  position: absolute;
+  right: 0;
+}
+
+.share-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 0;
+  background: none;
+  border: none;
+}
+
+.share-btn::after {
+  display: none;
+}
+
+.action-icon {
+  font-size: 40rpx;
+  margin-bottom: 4rpx;
+}
+
+.action-text {
+  font-size: 22rpx;
+  color: #666;
+}

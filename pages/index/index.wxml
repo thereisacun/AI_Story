@@ -1,0 +1,65 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 顶部会员状态 -->
+  <view class="member-bar" bindtap="onMemberTap">
+    <text class="member-status">{{memberStatus.type === 'free' ? '未激活会员' : '会员至 ' + memberStatus.expireTime}}</text>
+    <text class="member-arrow">›</text>
+  </view>
+
+  <!-- 分类选择 -->
+  <view class="section">
+    <view class="section-title">选择分类</view>
+    <view class="category-list">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="category-item {{selectedCategory === item.id ? 'active' : ''}}"
+        bindtap="onCategoryTap"
+        data-category="{{item.id}}"
+      >
+        <text class="category-icon">{{item.icon}}</text>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI生成入口 -->
+  <view class="section">
+    <view class="generate-btn" bindtap="onGenerateTap">
+      <text class="generate-icon">✨</text>
+      <text class="generate-text">AI生成故事</text>
+      <text class="generate-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 短文列表 -->
+  <view class="section" wx:if="{{selectedCategory}}">
+    <view class="section-title">短文列表</view>
+    <view class="article-list">
+      <view
+        wx:for="{{articleList}}"
+        wx:key="id"
+        class="article-item"
+        bindtap="onArticleTap"
+        data-id="{{item._id || item.id}}"
+      >
+        <view class="article-info">
+          <text class="article-title">{{item.title}}</text>
+          <view class="article-meta">
+            <text class="article-words">{{item.words.length}} 个单词</text>
+            <text class="article-status {{progressMap[item._id] === 2 ? 'finished' : ''}}">
+              {{progressMap[item._id] === 2 ? '已读完' : '未读'}}
+            </text>
+          </view>
+        </view>
+        <text class="article-arrow">›</text>
+      </view>
+    </view>
+    <view wx:if="{{loading}}" class="loading">
+      <text>加载中...</text>
+    </view>
+    <view wx:if="{{!loading && articleList.length === 0}}" class="empty">
+      <text>该分类暂无短文</text>
+    </view>
+  </view>
+</view>
