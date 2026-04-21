@@ -22,7 +22,7 @@ App({
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
     } else {
       wx.cloud.init({
-        env: 'ai-story-xxxx', // TODO: 替换为实际云环境ID
+        env: 'test-3gx8xmztd4d205b5',
         traceUser: true
       });
     }

@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./",
   "projectname": "AI_Story",
-  "appid": "YOUR_APPID",
+  "appid": "wx5f9ceda372384624",
   "compileType": "miniprogram",
   "setting": {
     "urlCheck": false,
@@ -38,7 +38,12 @@
     "disableUseStrict": false,
     "minifyWXML": true,
     "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "useCompilerPlugins": false,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "libVersion": "3.0.0",
   "condition": {
@@ -51,5 +56,10 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
   }
 }
