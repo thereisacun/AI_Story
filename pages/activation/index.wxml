@@ -1,0 +1,87 @@
+<!-- pages/activation/index.wxml -->
+<view class="container">
+  <!-- 会员状态卡片 -->
+  <view class="status-card">
+    <view class="status-header">
+      <text class="status-title">会员状态</text>
+      <view class="status-badge {{memberType}}">
+        <text>{{memberType === 'free' ? '免费' : (memberType === 'trial' ? '试用' : (memberType === 'month' ? '月卡' : (memberType === 'season' ? '季卡' : '年卡')))}}</text>
+      </view>
+    </view>
+
+    <view class="status-info" wx:if="{{memberType !== 'free'}}">
+      <text class="expire-label">到期时间</text>
+      <text class="expire-time">{{formatDate(expireTime)}}</text>
+    </view>
+
+    <view class="status-tip" wx:if="{{memberType === 'free'}}">
+      <text>激活会员，解锁无限AI生成</text>
+    </view>
+  </view>
+
+  <!-- 激活码区域 -->
+  <view class="activate-section">
+    <view class="section-title">兑换激活码</view>
+    <view class="activate-form">
+      <input
+        class="cdk-input"
+        type="text"
+        placeholder="请输入激活码（自动转大写）"
+        value="{{cdkInput}}"
+        maxlength="20"
+        bindinput="onCDKInput"
+      />
+      <button
+        class="activate-btn {{activating ? 'loading' : ''}}"
+        bindtap="onActivateTap"
+        disabled="{{activating}}"
+      >
+        <text wx:if="{{!activating}}">立即激活</text>
+        <text wx:if="{{activating}}">激活中...</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 会员权益 -->
+  <view class="benefits-section">
+    <view class="section-title">会员权益</view>
+    <view class="benefits-grid">
+      <view class="benefit-item trial">
+        <view class="benefit-header">
+          <text class="benefit-type">试用卡</text>
+          <text class="benefit-days">7天</text>
+        </view>
+        <text class="benefit-quota">每天10次AI生成</text>
+      </view>
+
+      <view class="benefit-item month">
+        <view class="benefit-header">
+          <text class="benefit-type">月卡</text>
+          <text class="benefit-days">30天</text>
+        </view>
+        <text class="benefit-quota">每天50次AI生成</text>
+      </view>
+
+      <view class="benefit-item season">
+        <view class="benefit-header">
+          <text class="benefit-type">季卡</text>
+          <text class="benefit-days">90天</text>
+        </view>
+        <text class="benefit-quota">每天150次AI生成</text>
+      </view>
+
+      <view class="benefit-item year">
+        <view class="benefit-header">
+          <text class="benefit-type">年卡</text>
+          <text class="benefit-days">365天</text>
+        </view>
+        <text class="benefit-quota">每天365次AI生成</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提示 -->
+  <view class="tips-section">
+    <text class="tips-text">激活码只能使用一次，不可重复使用</text>
+  </view>
+</view>

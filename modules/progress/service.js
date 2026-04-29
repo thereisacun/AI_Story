@@ -1,11 +1,10 @@
 // modules/progress/service.js
 // 唯一包含async/await的层，调用utils
 
-import { db } from '../../utils/db.js';
-import { storage } from '../../utils/storage.js';
-import { ProgressModel } from './model.js';
+const { getDB } = require('../../utils/db.js');
+const { storage } = require('../../utils/storage.js');
 
-export const ProgressService = {
+const ProgressService = {
   // 获取进度列表
   async getList(openid) {
     const cacheKey = 'progress_' + openid;
@@ -16,6 +15,7 @@ export const ProgressService = {
     }
 
     try {
+      const db = await getDB();
       const res = await db.collection('user_progress')
         .where({ openid })
         .get();
@@ -41,10 +41,10 @@ export const ProgressService = {
     // 先更新本地缓存
     const cacheKey = 'progress_' + openid;
     let list = storage.get(cacheKey) || [];
-    const index = list.findIndex(p => p.articleId === articleId);
+    const index = list.findIndex(function(p) { return p.articleId === articleId; });
 
     if (index >= 0) {
-      list[index] = { ...list[index], ...data };
+      list[index] = Object.assign({}, list[index], data);
     } else {
       list.push(data);
     }
@@ -52,12 +52,14 @@ export const ProgressService = {
 
     // 异步同步到云端
     try {
+      const db = await getDB();
       await db.collection('user_progress')
-        .where({ openid, articleId })
-        .update({ data });
+        .where({ openid: openid, articleId: articleId })
+        .update({ data: data });
     } catch (err) {
       // 不存在则新增
-      return await db.collection('user_progress').add({ data });
+      const db = await getDB();
+      return await db.collection('user_progress').add({ data: data });
     }
 
     return data;
@@ -74,18 +76,20 @@ export const ProgressService = {
     // 更新本地收藏列表缓存
     const cacheKey = 'favorites_' + openid;
     let list = storage.get(cacheKey) || [];
-    if (!list.find(f => f.articleId === articleId)) {
+    if (!list.find(function(f) { return f.articleId === articleId; })) {
       list.unshift(data);
       storage.set(cacheKey, list);
     }
 
     // 异步同步到云端
     try {
+      const db = await getDB();
       await db.collection('user_favorite')
-        .where({ openid, articleId })
-        .update({ data });
+        .where({ openid: openid, articleId: articleId })
+        .update({ data: data });
     } catch (err) {
-      return await db.collection('user_favorite').add({ data });
+      const db = await getDB();
+      return await db.collection('user_favorite').add({ data: data });
     }
 
     return data;
@@ -96,12 +100,13 @@ export const ProgressService = {
     // 更新本地缓存
     const cacheKey = 'favorites_' + openid;
     let list = storage.get(cacheKey) || [];
-    list = list.filter(f => f.articleId !== articleId);
+    list = list.filter(function(f) { return f.articleId !== articleId; });
     storage.set(cacheKey, list);
 
     // 同步到云端
+    const db = await getDB();
     return await db.collection('user_favorite')
-      .where({ openid, articleId })
+      .where({ openid: openid, articleId: articleId })
       .remove();
   },
 
@@ -115,8 +120,9 @@ export const ProgressService = {
     }
 
     try {
+      const db = await getDB();
       const res = await db.collection('user_favorite')
-        .where({ openid })
+        .where({ openid: openid })
         .orderBy('createdAt', 'desc')
         .get();
 
@@ -129,3 +135,5 @@ export const ProgressService = {
     }
   }
 };
+
+module.exports = { ProgressService };

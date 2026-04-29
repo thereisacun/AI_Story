@@ -1,32 +1,34 @@
 // modules/ai/service.js
 // 唯一包含async/await的层，调用utils
 
-import { generateStoryStream as streamGen } from '../../utils/ai.js';
-import { PROMPT_TEMPLATES, AIModel } from './model.js';
+const { generateStoryStream: streamGen } = require('../../utils/ai.js');
+const { PROMPT_TEMPLATES, AIModel } = require('./model.js');
 
 let currentStream = null;
 
-export const AIService = {
+const AIService = {
   // 完整生成（不流式）
-  async generate({ category, topic }) {
+  async generate(params) {
+    const category = params.category;
+    const topic = params.topic;
     const prompt = PROMPT_TEMPLATES[category].replace('{topic}', topic);
 
     let fullContent = '';
     const buffer = [];
 
-    await new Promise((resolve, reject) => {
+    await new Promise(function(resolve, reject) {
       streamGen({
         model: 'hunyuan-turbos-latest',
         messages: [{ role: 'user', content: prompt }]
       }, {
-        onChunk: (text) => {
+        onChunk: function(text) {
           buffer.push(text);
         },
-        onDone: () => {
+        onDone: function() {
           fullContent = buffer.join('');
           resolve();
         },
-        onError: (err) => {
+        onError: function(err) {
           reject(err);
         }
       });
@@ -36,9 +38,13 @@ export const AIService = {
   },
 
   // 流式生成（带buffer优化，解决闪烁问题）
-  generateStream({ category, topic }, callbacks = {}) {
+  generateStream(params, callbacks) {
+    const category = params.category;
+    const topic = params.topic;
     const prompt = PROMPT_TEMPLATES[category].replace('{topic}', topic);
-    const { onChunk, onDone, onError } = callbacks;
+    const onChunk = callbacks.onChunk;
+    const onDone = callbacks.onDone;
+    const onError = callbacks.onError;
 
     // buffer用于解决AI生成闪烁问题（P0性能瓶颈）
     let buffer = '';
@@ -48,7 +54,7 @@ export const AIService = {
       model: 'hunyuan-turbos-latest',
       messages: [{ role: 'user', content: prompt }]
     }, {
-      onChunk: (text) => {
+      onChunk: function(text) {
         buffer += text;
 
         // 攒够buffer size再回调，减少setData频率
@@ -57,14 +63,14 @@ export const AIService = {
           buffer = '';
         }
       },
-      onDone: () => {
+      onDone: function() {
         // 输出剩余buffer
         if (buffer && onChunk) {
           onChunk(buffer);
         }
         if (onDone) onDone();
       },
-      onError: (err) => {
+      onError: function(err) {
         if (onError) onError(err);
       }
     });
@@ -81,3 +87,5 @@ export const AIService = {
     }
   }
 };
+
+module.exports = { AIService };

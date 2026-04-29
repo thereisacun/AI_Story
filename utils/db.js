@@ -2,38 +2,58 @@
 // 数据库操作封装
 
 /**
- * 云开发数据库实例
+ * 云开发数据库实例（带重试，解决初始化时序问题）
  */
-export const db = wx.cloud.database();
+async function getDB() {
+  console.log('[db] getDB called');
+  const maxRetries = 20;
+  const delayMs = 200;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      if (!wx.cloud) {
+        console.log('[db] wx.cloud not ready, attempt', i + 1);
+        await new Promise(function(resolve) { setTimeout(resolve, delayMs); });
+        continue;
+      }
+
+      const db = wx.cloud.database();
+
+      if (db && typeof db.collection === 'function') {
+        console.log('[db] got valid db at attempt', i + 1);
+        return db;
+      }
+      console.log('[db] invalid db at attempt', i + 1);
+    } catch (err) {
+      console.log('[db] error at attempt', i + 1, ':', err.message || err.errMsg);
+    }
+    await new Promise(function(resolve) { setTimeout(resolve, delayMs); });
+  }
+  throw new Error('wx.cloud.database() not available after retries');
+}
 
 /**
  * 通用查询
  */
-export async function query(collectionName, conditions = {}) {
+async function query(collectionName, conditions) {
   try {
-    let query = db.collection(collectionName);
+    const db = await getDB();
+    let q = db.collection(collectionName);
 
-    // 处理where条件
     if (conditions.where) {
-      query = query.where(conditions.where);
+      q = q.where(conditions.where);
     }
-
-    // 处理orderBy
     if (conditions.orderBy) {
-      query = query.orderBy(conditions.orderBy.field, conditions.orderBy.order);
+      q = q.orderBy(conditions.orderBy.field, conditions.orderBy.order);
     }
-
-    // 处理limit
     if (conditions.limit) {
-      query = query.limit(conditions.limit);
+      q = q.limit(conditions.limit);
     }
-
-    // 处理skip
     if (conditions.skip) {
-      query = query.skip(conditions.skip);
+      q = q.skip(conditions.skip);
     }
 
-    return await query.get();
+    return await q.get();
   } catch (err) {
     console.error('[db] query error:', err);
     throw err;
@@ -43,15 +63,15 @@ export async function query(collectionName, conditions = {}) {
 /**
  * 通用新增
  */
-export async function add(collectionName, data) {
-  return await db.collection(collectionName).add({ data });
+async function add(collectionName, data) {
+  return await (await getDB()).collection(collectionName).add({ data });
 }
 
 /**
  * 通用更新
  */
-export async function update(collectionName, conditions, data) {
-  return await db.collection(collectionName)
+async function update(collectionName, conditions, data) {
+  return await (await getDB()).collection(collectionName)
     .where(conditions)
     .update({ data });
 }
@@ -59,8 +79,8 @@ export async function update(collectionName, conditions, data) {
 /**
  * 通用删除
  */
-export async function remove(collectionName, conditions) {
-  return await db.collection(collectionName)
+async function remove(collectionName, conditions) {
+  return await (await getDB()).collection(collectionName)
     .where(conditions)
     .remove();
 }
@@ -68,6 +88,15 @@ export async function remove(collectionName, conditions) {
 /**
  * 根据ID获取单条记录
  */
-export async function getById(collectionName, id) {
-  return await db.collection(collectionName).doc(id).get();
+async function getById(collectionName, id) {
+  return await (await getDB()).collection(collectionName).doc(id).get();
 }
+
+module.exports = {
+  getDB,
+  query,
+  add,
+  update,
+  remove,
+  getById
+};

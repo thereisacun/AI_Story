@@ -39,29 +39,24 @@
   <!-- 生成按钮 -->
   <view class="section">
     <button
-      class="generate-btn {{generating ? 'loading' : ''}}"
-      bindtap="{{generating ? 'onCancelTap' : 'onGenerateTap'}}"
-      disabled="{{!selectedCategory || !topic.trim()}}"
+      wx:if="{{!generating}}"
+      class="generate-btn {{canGenerate ? '' : 'disabled'}}"
+      bindtap="onGenerateTap"
     >
-      <text wx:if="{{generating}}">取消生成</text>
-      <text wx:else>✨ 开始生成</text>
+      <text>✨ 开始生成</text>
+    </button>
+    <button
+      wx:else
+      class="generate-btn loading"
+      bindtap="onCancelTap"
+    >
+      <text>取消生成</text>
     </button>
   </view>
 
   <!-- 错误提示 -->
   <view wx:if="{{error}}" class="error-tip">
     <text>{{error}}</text>
-  </view>
-
-  <!-- 生成结果预览 -->
-  <view wx:if="{{generatedContent}}" class="result-section">
-    <view class="section-title">生成预览</view>
-    <view class="result-content">
-      <text class="result-text">{{generatedContent}}</text>
-    </view>
-    <button class="view-btn" bindtap="onViewResultTap">
-      在阅读页查看
-    </button>
   </view>
 
   <!-- 生成中状态 -->

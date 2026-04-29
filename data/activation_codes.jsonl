@@ -1,0 +1,8 @@
+{"code":"TRIAL001","type":"trial","days":7,"status":"unused","createdAt":1710969600000}
+{"code":"TRIAL002","type":"trial","days":7,"status":"unused","createdAt":1710969600000}
+{"code":"MONTH001","type":"month","days":30,"status":"unused","createdAt":1710969600000}
+{"code":"MONTH002","type":"month","days":30,"status":"unused","createdAt":1710969600000}
+{"code":"SEASON01","type":"season","days":90,"status":"unused","createdAt":1710969600000}
+{"code":"SEASON02","type":"season","days":90,"status":"unused","createdAt":1710969600000}
+{"code":"YEAR0001","type":"year","days":365,"status":"unused","createdAt":1710969600000}
+{"code":"YEAR0002","type":"year","days":365,"status":"unused","createdAt":1710969600000}

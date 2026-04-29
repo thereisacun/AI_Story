@@ -92,6 +92,54 @@
   overflow: hidden;
 }
 
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.article-card {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.article-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.article-card-title {
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.article-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.article-card-words {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.article-card-status {
+  font-size: 24rpx;
+  color: #3CAB6E;
+}
+
+.article-card-status.finished {
+  color: #52c41a;
+}
+
 .article-item {
   display: flex;
   align-items: center;

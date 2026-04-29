@@ -1,11 +1,11 @@
 // modules/member/service.js
 // 唯一包含async/await的层，调用utils
 
-import { db } from '../../utils/db.js';
-import { storage } from '../../utils/storage.js';
-import { CDK_CONFIGS, MEMBER_TYPE, MEMBER_BENEFITS } from './model.js';
+const { getDB } = require('../../utils/db.js');
+const { storage } = require('../../utils/storage.js');
+const { CDK_CONFIGS, MEMBER_TYPE, MEMBER_BENEFITS } = require('./model.js');
 
-export const MemberService = {
+const MemberService = {
   // 获取会员状态
   async getStatus(openid) {
     // 先查本地缓存
@@ -16,6 +16,7 @@ export const MemberService = {
 
     // 从数据库查询
     try {
+      const db = await getDB();
       const res = await db.collection('user_member')
         .where({ openid })
         .get();
@@ -37,37 +38,31 @@ export const MemberService = {
     };
   },
 
-  // 激活CDK
+  // 激活CDK（调用云函数）
   async activate(cdk, openid) {
-    const config = CDK_CONFIGS[cdk];
-    if (!config) {
-      throw new Error('无效的激活码');
-    }
-
-    const now = Date.now();
-    const expireTime = now + config.days * 24 * 60 * 60 * 1000;
-
-    const memberData = {
-      openid,
-      type: config.type,
-      expireTime,
-      activatedAt: now
-    };
-
-    // 保存到数据库
-    await db.collection('user_member')
-      .where({ openid })
-      .update({
-        data: memberData
-      }).catch(() => {
-        // 不存在则新增
-        return db.collection('user_member').add({ data: memberData });
+    try {
+      const { result } = await wx.cloud.callFunction({
+        name: 'handleActivation',
+        data: { code: cdk, openid }
       });
 
-    // 更新本地缓存
-    storage.set('memberStatus', memberData);
+      if (!result.success) {
+        throw new Error(result.error || '激活失败');
+      }
 
-    return memberData;
+      // 更新本地缓存
+      const memberData = {
+        type: result.data.memberType,
+        expireTime: result.data.expireTime,
+        activatedAt: Date.now()
+      };
+      storage.set('memberStatus', memberData);
+
+      return memberData;
+    } catch (err) {
+      console.error('[member] activate error:', err);
+      throw err;
+    }
   },
 
   // 获取AI配额
@@ -114,3 +109,5 @@ export const MemberService = {
     }
   }
 };
+
+module.exports = { MemberService };

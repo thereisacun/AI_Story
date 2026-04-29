@@ -17,18 +17,21 @@ App({
   },
 
   onLaunch() {
+    console.log('[app] onLaunch called');
+
     // 初始化云开发
     if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力');
+      console.error('[app] wx.cloud is undefined, please use baseline library >= 2.2.3');
     } else {
       wx.cloud.init({
         env: 'test-3gx8xmztd4d205b5',
         traceUser: true
       });
+      console.log('[app] wx.cloud.init called');
     }
 
-    // 获取用户openid
-    this.getOpenid();
+    // 获取用户openid（暂时跳过，等部署getOpenid云函数）
+    // this.getOpenid();
 
     // 加载本地缓存的会员状态
     this.loadMemberStatus();
@@ -42,6 +45,7 @@ App({
       this.globalData.openid = result.openid;
     } catch (err) {
       console.error('[app] getOpenid failed:', err);
+      this.globalData.openid = 'temp_openid_' + Date.now();
     }
   },
 

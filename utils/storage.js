@@ -6,7 +6,7 @@
  * @param {string} key - 存储键名
  * @returns {any} 存储的值，如果不存在返回null
  */
-export function get(key) {
+function get(key) {
   try {
     const value = wx.getStorageSync(key);
     return value || null;
@@ -21,7 +21,7 @@ export function get(key) {
  * @param {string} key - 存储键名
  * @param {any} value - 存储的值
  */
-export function set(key, value) {
+function set(key, value) {
   try {
     wx.setStorageSync(key, value);
   } catch (err) {
@@ -33,7 +33,7 @@ export function set(key, value) {
  * 移除本地存储
  * @param {string} key - 存储键名
  */
-export function remove(key) {
+function remove(key) {
   try {
     wx.removeStorageSync(key);
   } catch (err) {
@@ -44,7 +44,7 @@ export function remove(key) {
 /**
  * 清空所有本地存储（谨慎使用）
  */
-export function clear() {
+function clear() {
   try {
     wx.clearStorageSync();
   } catch (err) {
@@ -55,7 +55,7 @@ export function clear() {
 /**
  * 获取存储信息
  */
-export function getInfo() {
+function getInfo() {
   try {
     return wx.getStorageInfoSync();
   } catch (err) {
@@ -63,3 +63,11 @@ export function getInfo() {
     return null;
   }
 }
+
+module.exports = {
+  get,
+  set,
+  remove,
+  clear,
+  getInfo
+};

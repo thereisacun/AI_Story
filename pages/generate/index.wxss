@@ -78,8 +78,10 @@
   border: none;
 }
 
-.generate-btn[disabled] {
+.generate-btn[disabled],
+.generate-btn.disabled {
   background: #ccc;
+  color: #fff;
 }
 
 .generate-btn.loading {

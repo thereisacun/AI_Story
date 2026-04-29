@@ -1,0 +1,195 @@
+/* pages/activation/index.wxss */
+
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 20rpx;
+}
+
+/* 状态卡片 */
+.status-card {
+  background: linear-gradient(135deg, #3CAB6E 0%, #2d8a57 100%);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  color: #fff;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.status-title {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+
+.status-badge {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.status-badge.free {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.status-badge.trial {
+  background: #1890ff;
+}
+
+.status-badge.month {
+  background: #faad14;
+}
+
+.status-badge.season {
+  background: #722ed1;
+}
+
+.status-badge.year {
+  background: #eb2f96;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.expire-label {
+  font-size: 26rpx;
+  opacity: 0.8;
+  margin-bottom: 8rpx;
+}
+
+.expire-time {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.status-tip {
+  text-align: center;
+  padding: 30rpx 0;
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+/* 激活区域 */
+.activate-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.activate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.cdk-input {
+  height: 88rpx;
+  background: #f5f5f5;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  letter-spacing: 2rpx;
+}
+
+.activate-btn {
+  height: 88rpx;
+  background: #3CAB6E;
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activate-btn.loading {
+  background: #a5d6b3;
+}
+
+/* 权益区域 */
+.benefits-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.benefit-item {
+  padding: 24rpx;
+  border-radius: 12rpx;
+  background: #f9f9f9;
+}
+
+.benefit-item.trial {
+  border-left: 4rpx solid #1890ff;
+}
+
+.benefit-item.month {
+  border-left: 4rpx solid #faad14;
+}
+
+.benefit-item.season {
+  border-left: 4rpx solid #722ed1;
+}
+
+.benefit-item.year {
+  border-left: 4rpx solid #eb2f96;
+}
+
+.benefit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.benefit-type {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.benefit-days {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.benefit-quota {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 提示 */
+.tips-section {
+  text-align: center;
+  padding: 20rpx;
+}
+
+.tips-text {
+  font-size: 24rpx;
+  color: #999;
+}

@@ -1,9 +1,9 @@
 // modules/article/api.js
 // 禁止在此文件写任何业务逻辑
 
-import { ArticleService } from './service.js';
+const { ArticleService } = require('./service.js');
 
-export async function fetchArticleList(category) {
+async function fetchArticleList(category) {
   try {
     return await ArticleService.getListByCategory(category);
   } catch (err) {
@@ -12,7 +12,7 @@ export async function fetchArticleList(category) {
   }
 }
 
-export async function getArticleDetail(id) {
+async function getArticleDetail(id) {
   try {
     return await ArticleService.getById(id);
   } catch (err) {
@@ -21,7 +21,7 @@ export async function getArticleDetail(id) {
   }
 }
 
-export async function saveArticle(article) {
+async function saveArticle(article) {
   try {
     return await ArticleService.save(article);
   } catch (err) {
@@ -29,3 +29,9 @@ export async function saveArticle(article) {
     throw err;
   }
 }
+
+module.exports = {
+  fetchArticleList,
+  getArticleDetail,
+  saveArticle
+};

@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/read/index",
     "pages/generate/index",
-    "pages/my/index"
+    "pages/my/index",
+    "pages/activation/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -30,12 +31,6 @@
         "selectedIconPath": "static/tabbar/my-active.png"
       }
     ]
-  },
-  "usingComponents": {
-    "van-button": "@vant/weapp/button/index",
-    "van-field": "@vant/weapp/field/index",
-    "van-toast": "@vant/weapp/toast/index",
-    "van-loading": "@vant/weapp/loading/index"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

@@ -20,18 +20,11 @@
   <view class="activate-section">
     <view class="section-title">激活码兑换</view>
     <view class="activate-form">
-      <input
-        class="cdk-input"
-        placeholder="请输入激活码"
-        value="{{cdkInput}}"
-        bindinput="onCDKInput"
-      />
       <button
-        class="activate-btn"
+        class="activate-btn-new"
         bindtap="onActivateTap"
-        loading="{{activating}}"
       >
-        立即激活
+        激活会员
       </button>
     </view>
   </view>
@@ -66,7 +59,7 @@
         bindtap="onArticleTap"
         data-id="{{item.articleId}}"
       >
-        <text class="favorite-title">{{item.articleId}}</text>
+        <text class="favorite-title">{{item.title || item.articleId}}</text>
         <text class="favorite-arrow">›</text>
       </view>
     </view>

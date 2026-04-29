@@ -1,0 +1,9 @@
+{
+  "name": "handleActivation",
+  "version": "1.0.0",
+  "description": "处理激活码兑换",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -11,73 +11,142 @@
  * @param {Function} callbacks.onDone - 完成时的回调
  * @param {Function} callbacks.onError - 错误时的回调
  */
-export function generateStoryStream(params, callbacks = {}) {
-  const { onChunk, onDone, onError } = callbacks;
+function generateStoryStream(params, callbacks) {
+  callbacks = callbacks || {};
+  const onChunk = callbacks.onChunk;
+  const onDone = callbacks.onDone;
+  const onError = callbacks.onError;
+
+  console.log('[ai] generateStoryStream called');
+  console.log('[ai] wx.cloud:', typeof wx.cloud);
+  console.log('[ai] wx.cloud.extend:', typeof wx.cloud?.extend);
+  console.log('[ai] wx.cloud.extend.AI:', typeof wx.cloud?.extend?.AI);
 
   try {
-    const model = wx.cloud.extend.AI.createModel("hunyuan-exp");
+    if (!wx.cloud) {
+      throw new Error('wx.cloud is undefined');
+    }
+    if (!wx.cloud.extend) {
+      throw new Error('wx.cloud.extend is undefined');
+    }
+    if (!wx.cloud.extend.AI) {
+      throw new Error('wx.cloud.extend.AI is undefined');
+    }
 
-    const stream = model.streamText({
+    console.log('[ai] creating model...');
+    const model = wx.cloud.extend.AI.createModel("hunyuan-exp");
+    console.log('[ai] model:', typeof model);
+    console.log('[ai] model.streamText:', typeof model?.streamText);
+
+    // 调用 streamText
+    const streamResult = model.streamText({
       data: {
         model: params.model || 'hunyuan-turbos-latest',
         messages: params.messages
       }
     });
 
-    // 遍历事件流
-    const iterate = async () => {
-      try {
-        for await (let event of stream.eventStream) {
-          if (event.data === "[DONE]") {
-            break;
-          }
+    console.log('[ai] streamResult type:', typeof streamResult);
+    console.log('[ai] streamResult.then:', typeof streamResult?.then);
 
-          const data = JSON.parse(event.data);
-          const text = data?.choices?.[0]?.delta?.content;
+    // streamText 可能返回 Promise 或直接对象
+    if (streamResult && typeof streamResult.then === 'function') {
+      console.log('[ai] streamText returned a Promise, awaiting...');
 
-          if (text && onChunk) {
-            onChunk(text);
-          }
+      streamResult.then(function(res) {
+        console.log('[ai] streamResult resolved, res:', typeof res);
+        console.log('[ai] res.eventStream:', typeof res?.eventStream);
+
+        if (res && res.eventStream) {
+          handleStream(res.eventStream);
+        } else {
+          console.error('[ai] res.eventStream is undefined');
+          if (onError) onError(new Error('streamText 返回格式错误'));
         }
-
-        if (onDone) onDone();
-      } catch (err) {
+      }).catch(function(err) {
+        console.error('[ai] streamText promise error:', err);
         if (onError) onError(err);
-      }
-    };
+      });
 
-    iterate();
+    } else if (streamResult && streamResult.eventStream) {
+      console.log('[ai] streamResult has eventStream directly');
+      handleStream(streamResult.eventStream);
+    } else {
+      console.error('[ai] streamResult format unexpected:', streamResult);
+      if (onError) onError(new Error('streamText 返回格式错误'));
+    }
+
+    // 处理事件流
+    function handleStream(eventStream) {
+      console.log('[ai] handling stream...');
+
+      const iterate = async function() {
+        try {
+          for await (let event of eventStream) {
+            console.log('[ai] event:', event.data ? event.data.substring(0, 50) : event);
+
+            if (event.data === "[DONE]") {
+              console.log('[ai] stream done');
+              break;
+            }
+
+            const data = JSON.parse(event.data);
+            const text = data?.choices?.[0]?.delta?.content;
+
+            if (text && onChunk) {
+              onChunk(text);
+            }
+          }
+
+          console.log('[ai] stream completed');
+          if (onDone) onDone();
+        } catch (err) {
+          console.error('[ai] iterate error:', err);
+          if (onError) onError(err);
+        }
+      };
+
+      iterate().catch(function(err) {
+        console.error('[ai] iterate catch error:', err);
+        if (onError) onError(err);
+      });
+    }
 
     // 返回stream对象，支持取消
     return {
-      abort: () => {
-        // 微信云开发的stream不支持直接abort，返回空函数
+      abort: function() {
         console.log('[ai] stream abort called');
       }
     };
   } catch (err) {
+    console.error('[ai] try-catch error:', err);
     if (onError) onError(err);
-    return { abort: () => {} };
+    return { abort: function() {} };
   }
 }
 
 /**
  * 完整生成（不流式，返回完整内容）
  */
-export async function generateStory(params) {
-  return new Promise((resolve, reject) => {
+async function generateStory(params) {
+  return new Promise(function(resolve, reject) {
     let fullContent = '';
 
     generateStoryStream(params, {
-      onChunk: (text) => {
+      onChunk: function(text) {
         fullContent += text;
       },
-      onDone: () => {
+      onDone: function() {
         resolve(fullContent);
       },
-      onError: (err) => {
+      onError: function(err) {
         reject(err);
       }
     });
   });
 }
+
+module.exports = {
+  generateStoryStream,
+  generateStory
+};

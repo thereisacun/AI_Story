@@ -35,24 +35,23 @@
   <!-- 短文列表 -->
   <view class="section" wx:if="{{selectedCategory}}">
     <view class="section-title">短文列表</view>
-    <view class="article-list">
+    <view class="article-grid">
       <view
         wx:for="{{articleList}}"
-        wx:key="id"
-        class="article-item"
+        wx:key="_id"
+        class="article-card"
         bindtap="onArticleTap"
-        data-id="{{item._id || item.id}}"
+        data-id="{{item._id}}"
       >
-        <view class="article-info">
-          <text class="article-title">{{item.title}}</text>
-          <view class="article-meta">
-            <text class="article-words">{{item.words.length}} 个单词</text>
-            <text class="article-status {{progressMap[item._id] === 2 ? 'finished' : ''}}">
-              {{progressMap[item._id] === 2 ? '已读完' : '未读'}}
+        <view class="article-card-content">
+          <text class="article-card-title">{{item.title}}</text>
+          <view class="article-card-meta">
+            <text class="article-card-words">{{item.words.length}} 词</text>
+            <text class="article-card-status {{progressMap[item._id] === 2 ? 'finished' : ''}}">
+              {{progressMap[item._id] === 2 ? '✓ 已读' : '○ 未读'}}
             </text>
           </view>
         </view>
-        <text class="article-arrow">›</text>
       </view>
     </view>
     <view wx:if="{{loading}}" class="loading">

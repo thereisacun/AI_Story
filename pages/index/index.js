@@ -1,9 +1,9 @@
 // pages/index/index.js
 // 首页：分类选择、预置短文列表、AI生成入口
 
-import { fetchArticleList } from '../../../modules/article/index.js';
-import { CATEGORIES } from '../../../modules/article/model.js';
-import { getProgress } from '../../../modules/progress/index.js';
+const { fetchArticleList } = require('../../modules/article/index.js');
+const { CATEGORIES } = require('../../modules/article/model.js');
+const { getProgress } = require('../../modules/progress/index.js');
 
 Page({
   data: {

@@ -1,5 +1,6 @@
 {
   "miniprogramRoot": "./",
+  "cloudfunctionRoot": "./cloudfunctions/",
   "projectname": "AI_Story",
   "appid": "wx5f9ceda372384624",
   "compileType": "miniprogram",
@@ -51,7 +52,6 @@
       "list": []
     }
   },
-  "srcMiniprogramRoot": "miniprogram/",
   "load_dirs": [],
   "editorSetting": {
     "tabIndent": "insertSpaces",
@@ -61,5 +61,6 @@
   "packOptions": {
     "ignore": [],
     "include": []
-  }
+  },
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
 }

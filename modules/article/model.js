@@ -1,7 +1,7 @@
 // modules/article/model.js
 // 禁止在此文件写任何执行逻辑
 
-export const ArticleModel = {
+const ArticleModel = {
   status: {
     UNREAD: 0,
     READING: 1,
@@ -11,7 +11,9 @@ export const ArticleModel = {
     id: 'string',
     title: 'string',
     category: 'string',
-    content: 'string',
+    content: 'string',       // 中英夹杂
+    contentCn: 'string',    // 全中文
+    contentEn: 'string',
     words: 'array',
     status: 'number',
     createdAt: 'number'
@@ -19,7 +21,7 @@ export const ArticleModel = {
 };
 
 // 分类常量
-export const CATEGORIES = [
+const CATEGORIES = [
   { id: 'xuanhuan', name: '玄幻修仙', icon: '🧙' },
   { id: 'city', name: '都市异能', icon: '🏙️' },
   { id: 'history', name: '历史穿越', icon: '🏯' },
@@ -27,8 +29,14 @@ export const CATEGORIES = [
 ];
 
 // 显示模式常量
-export const DISPLAY_MODE = {
+const DISPLAY_MODE = {
   MIXED: 'mixed',     // 中英夹杂
   CN_ONLY: 'cn',      // 全中文
   EN_ONLY: 'en'       // 全英文
+};
+
+module.exports = {
+  ArticleModel,
+  CATEGORIES,
+  DISPLAY_MODE
 };

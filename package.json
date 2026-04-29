@@ -1,0 +1,24 @@
+{
+  "name": "ai_story",
+  "version": "1.0.0",
+  "description": "> 帮助大学生通过「中英夹杂式语境阅读」高效记忆单词的微信小程序",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/thereisacun/AI_Story.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/thereisacun/AI_Story/issues"
+  },
+  "homepage": "https://github.com/thereisacun/AI_Story#readme",
+  "dependencies": {
+    "@vant/weapp": "^1.11.7"
+  }
+}
