@@ -2,16 +2,17 @@
 // 唯一包含async/await的层，调用utils
 
 const { generateStoryStream: streamGen } = require('../../utils/ai.js');
-const { PROMPT_TEMPLATES, AIModel } = require('./model.js');
+const { AIModel, buildPrompt } = require('./model.js');
 
 let currentStream = null;
 
 const AIService = {
   // 完整生成（不流式）
   async generate(params) {
-    const category = params.category;
-    const topic = params.topic;
-    const prompt = PROMPT_TEMPLATES[category].replace('{topic}', topic);
+    const { category, topic, mode = 'mixed' } = params;
+    const prompt = buildPrompt(category, topic, mode);
+    console.log('[AIService] generate called - mode:', mode, 'prompt length:', prompt.length);
+    console.log('[AIService] prompt preview:', prompt.substring(0, 200));
 
     let fullContent = '';
     const buffer = [];
@@ -39,9 +40,8 @@ const AIService = {
 
   // 流式生成（带buffer优化，解决闪烁问题）
   generateStream(params, callbacks) {
-    const category = params.category;
-    const topic = params.topic;
-    const prompt = PROMPT_TEMPLATES[category].replace('{topic}', topic);
+    const { category, topic, mode = 'mixed' } = params;
+    const prompt = buildPrompt(category, topic, mode);
     const onChunk = callbacks.onChunk;
     const onDone = callbacks.onDone;
     const onError = callbacks.onError;

@@ -17,10 +17,7 @@ function generateStoryStream(params, callbacks) {
   const onDone = callbacks.onDone;
   const onError = callbacks.onError;
 
-  console.log('[ai] generateStoryStream called');
-  console.log('[ai] wx.cloud:', typeof wx.cloud);
-  console.log('[ai] wx.cloud.extend:', typeof wx.cloud?.extend);
-  console.log('[ai] wx.cloud.extend.AI:', typeof wx.cloud?.extend?.AI);
+  console.log('[ai] generateStoryStream called, model:', params.model);
 
   try {
     if (!wx.cloud) {
@@ -33,10 +30,7 @@ function generateStoryStream(params, callbacks) {
       throw new Error('wx.cloud.extend.AI is undefined');
     }
 
-    console.log('[ai] creating model...');
     const model = wx.cloud.extend.AI.createModel("hunyuan-exp");
-    console.log('[ai] model:', typeof model);
-    console.log('[ai] model.streamText:', typeof model?.streamText);
 
     // 调用 streamText
     const streamResult = model.streamText({
@@ -47,15 +41,13 @@ function generateStoryStream(params, callbacks) {
     });
 
     console.log('[ai] streamResult type:', typeof streamResult);
-    console.log('[ai] streamResult.then:', typeof streamResult?.then);
 
     // streamText 可能返回 Promise 或直接对象
     if (streamResult && typeof streamResult.then === 'function') {
       console.log('[ai] streamText returned a Promise, awaiting...');
 
       streamResult.then(function(res) {
-        console.log('[ai] streamResult resolved, res:', typeof res);
-        console.log('[ai] res.eventStream:', typeof res?.eventStream);
+        console.log('[ai] streamResult resolved, res.eventStream:', typeof res?.eventStream);
 
         if (res && res.eventStream) {
           handleStream(res.eventStream);
@@ -83,8 +75,6 @@ function generateStoryStream(params, callbacks) {
       const iterate = async function() {
         try {
           for await (let event of eventStream) {
-            console.log('[ai] event:', event.data ? event.data.substring(0, 50) : event);
-
             if (event.data === "[DONE]") {
               console.log('[ai] stream done');
               break;

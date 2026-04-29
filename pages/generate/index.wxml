@@ -61,6 +61,6 @@
 
   <!-- 生成中状态 -->
   <view wx:if="{{generating}}" class="generating-tip">
-    <text>AI正在努力创作中，请稍候...</text>
+    <text>正在努力创作中，请稍候...</text>
   </view>
 </view>

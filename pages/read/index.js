@@ -8,22 +8,23 @@ const { updateProgress, addFavorite, removeFavorite } = require('../../modules/p
 Page({
   data: {
     article: null,
-    displayMode: DISPLAY_MODE.MIXED, // 默认中英夹杂
+    displayMode: 'mixed', // 默认中英夹杂（使用字符串）
     isFavorite: false,
     loading: true,
     displayContent: '',
-    isFromAI: false,  // 是否来自AI生成
-    isGenerating: false,  // AI是否正在生成
+    isFromAI: false,
+    isGenerating: false,
     generatingTopic: '',
     generatingCategory: '',
-    generatingContent: '',
+    generatingContentMixed: '',
+    generatingContentCn: '',
+    generatingContentEn: '',
     pollingTimer: null
   },
 
   onLoad(options) {
     const { id, generating, category, topic } = options;
 
-    // 如果是AI生成模式
     if (generating === '1' && category && topic) {
       this.setData({
         isFromAI: true,
@@ -32,19 +33,16 @@ Page({
         generatingCategory: category,
         loading: false
       });
-      // 启动轮询获取生成内容
       this.startPollingGeneratingContent();
       return;
     }
 
-    // 正常阅读模式
     if (id) {
       this.loadArticle(id);
     }
   },
 
   onUnload() {
-    // 停止轮询
     if (this.pollingTimer) {
       clearInterval(this.pollingTimer);
       this.pollingTimer = null;
@@ -52,98 +50,76 @@ Page({
   },
 
   onShow() {
-    // 页面展示时更新阅读进度
     this.updateReadingProgress();
   },
 
-  // 启动轮询获取生成内容
   startPollingGeneratingContent() {
     const self = this;
-    const app = getApp();
-
-    // 立即检查一次
     this.checkGeneratingContent();
-
-    // 每500ms轮询一次
     this.pollingTimer = setInterval(function() {
       self.checkGeneratingContent();
-    }, 500);
+    }, 300);
   },
 
-  // 检查生成内容状态
   checkGeneratingContent() {
     const app = getApp();
-    const { generatingDone, generatingError, generatingContent } = app.globalData;
+    const { generatingDone, generatingError, generatingContentMixed, generatingContentCn, generatingContentEn } = app.globalData;
 
-    // 更新内容
-    if (generatingContent !== undefined) {
-      this.setData({
-        generatingContent: generatingContent
-      });
-      this.updateGeneratingDisplay();
+    // 直接从 globalData 读取内容来更新显示
+    const { displayMode } = this.data;
+    let content = '';
+    if (displayMode === 'mixed') {
+      content = generatingContentMixed || '';
+    } else if (displayMode === 'cn') {
+      content = generatingContentCn || generatingContentMixed || '';
+    } else if (displayMode === 'en') {
+      content = generatingContentEn || generatingContentMixed || '';
     }
 
-    // 检查是否完成
+    this.setData({
+      generatingContentMixed: generatingContentMixed || '',
+      generatingContentCn: generatingContentCn || '',
+      generatingContentEn: generatingContentEn || '',
+      displayContent: content
+    });
+
     if (generatingDone) {
       if (this.pollingTimer) {
         clearInterval(this.pollingTimer);
         this.pollingTimer = null;
       }
 
+      this.setData({ isGenerating: false });
       if (generatingError) {
-        this.setData({ isGenerating: false });
         wx.showToast({ title: generatingError || '生成失败', icon: 'none' });
       } else {
-        this.setData({ isGenerating: false });
         wx.showToast({ title: '生成完成', icon: 'none' });
       }
     }
   },
 
-  // 更新生成内容的显示
   updateGeneratingDisplay() {
-    const { displayMode, generatingContent } = this.data;
+    const { displayMode } = this.data;
+    const app = getApp();
+    const { generatingContentMixed, generatingContentCn, generatingContentEn } = app.globalData;
     let content = '';
 
-    if (displayMode === DISPLAY_MODE.MIXED) {
-      content = generatingContent;
-    } else if (displayMode === DISPLAY_MODE.CN_ONLY) {
-      content = this.extractContentCn(generatingContent);
-    } else if (displayMode === DISPLAY_MODE.EN_ONLY) {
-      content = this.extractContentEn(generatingContent);
+    if (displayMode === 'mixed') {
+      content = generatingContentMixed || '';
+    } else if (displayMode === 'cn') {
+      content = generatingContentCn || generatingContentMixed || '';
+    } else if (displayMode === 'en') {
+      content = generatingContentEn || generatingContentMixed || '';
     }
 
     this.setData({ displayContent: content });
   },
 
-  // 提取中文内容（去掉英文单词和括号中的解释）
-  extractContentCn(content) {
-    return content.replace(/[A-Za-z\s]+\(([^)]+)\)/g, '$1');
-  },
-
-  // 提取纯英文单词
-  extractContentEn(content) {
-    const words = [];
-    const regex = /([A-Za-z\s]+)\(([^)]+)\)/g;
-    let match;
-    while ((match = regex.exec(content)) !== null) {
-      const word = match[1].trim();
-      if (word && !words.includes(word)) {
-        words.push(word);
-      }
-    }
-    return words.join(' ');
-  },
-
-  // 加载文章
-  async loadArticle(id) {
+  loadArticle: async function(id) {
     this.setData({ loading: true });
     try {
       const article = await getArticleDetail(id);
-      this.setData({
-        article,
-        loading: false
-      });
+      this.setData({ article, loading: false });
       this.updateDisplayContent();
     } catch (err) {
       wx.showToast({ title: '加载失败', icon: 'none' });
@@ -151,37 +127,45 @@ Page({
     }
   },
 
-  // 切换显示模式
   onModeChange(e) {
     const mode = e.currentTarget.dataset.mode;
-    this.setData({ displayMode: mode });
+    const app = getApp();
+    const { generatingContentMixed, generatingContentCn, generatingContentEn } = app.globalData;
 
-    // 如果是生成模式，更新生成内容的显示
-    if (this.data.isGenerating) {
-      this.updateGeneratingDisplay();
-    } else {
-      this.updateDisplayContent();
+    console.log('[read] onModeChange:', mode, 'cn length:', generatingContentCn?.length, 'en length:', generatingContentEn?.length);
+
+    // 直接从 globalData 读取内容设置显示
+    let content = '';
+    if (mode === 'mixed') {
+      content = generatingContentMixed || '';
+    } else if (mode === 'cn') {
+      content = generatingContentCn || generatingContentMixed || '';
+    } else if (mode === 'en') {
+      content = generatingContentEn || generatingContentMixed || '';
     }
+
+    this.setData({
+      displayMode: mode,
+      displayContent: content
+    });
   },
 
-  // 更新显示内容（正常阅读模式）
   updateDisplayContent() {
     const { article, displayMode } = this.data;
     if (!article) return;
 
     let content = '';
-    if (displayMode === DISPLAY_MODE.MIXED) {
+    if (displayMode === 'mixed') {
       content = article.content || '';
-    } else if (displayMode === DISPLAY_MODE.CN_ONLY) {
+    } else if (displayMode === 'cn') {
       content = article.contentCn || article.content || '';
-    } else if (displayMode === DISPLAY_MODE.EN_ONLY) {
+    } else if (displayMode === 'en') {
       content = article.contentEn || '';
     }
     this.setData({ displayContent: content });
   },
 
-  // 切换收藏
-  async onFavoriteTap() {
+  onFavoriteTap: async function() {
     const { article, isFavorite } = this.data;
     const openid = getApp().globalData.openid;
 
@@ -200,99 +184,83 @@ Page({
     }
   },
 
-  // 分享
   onShareAppMessage() {
     const { article } = this.data;
     return {
-      title: article ? article.title : 'AI短文记单词',
+      title: article ? article.title : '看故事背单词',
       path: '/pages/read/index?id=' + (article ? article._id : '')
     };
   },
 
-  // 更新阅读进度
-  async updateReadingProgress() {
+  updateReadingProgress: async function() {
     const { article } = this.data;
     if (!article) return;
-
     const openid = getApp().globalData.openid;
     try {
-      await updateProgress(openid, article._id, 1); // 1 = READING
+      await updateProgress(openid, article._id, 1);
     } catch (err) {
       console.error('[read] updateProgress error:', err);
     }
   },
 
-  // 标记已完成
-  async onFinishTap() {
+  onFinishTap: async function() {
     const { article } = this.data;
     const openid = getApp().globalData.openid;
-
     try {
-      await updateProgress(openid, article._id, 2); // 2 = FINISHED
+      await updateProgress(openid, article._id, 2);
       wx.showToast({ title: '已标记为读完', icon: 'none' });
     } catch (err) {
       wx.showToast({ title: '操作失败', icon: 'none' });
     }
   },
 
-  // 保存生成的短文
-  async onSaveTap() {
-    const { generatingContent, generatingTopic, generatingCategory } = this.data;
+  onSaveTap: async function() {
+    const { generatingContentMixed, generatingContentCn, generatingContentEn, generatingTopic, generatingCategory } = this.data;
     const openid = getApp().globalData.openid;
     const memberStatus = getApp().globalData.memberStatus;
 
-    if (!generatingContent.trim()) {
+    if (!generatingContentMixed.trim()) {
       wx.showToast({ title: '内容为空', icon: 'none' });
       return;
     }
 
-    // 非会员提示
     if (!memberStatus || memberStatus.type === 'free') {
       wx.showToast({ title: '注册会员保存', icon: 'none' });
       return;
     }
 
-    // 提取 contentCn、contentEn、words
-    const contentCn = this.extractContentCn(generatingContent);
-    const words = this.extractWords(generatingContent);
-    const contentEn = words.join(' ');
+    const words = this.extractWords(generatingContentMixed);
 
     const article = {
       openid: openid,
       category: generatingCategory || 'xuanhuan',
       title: 'AI生成: ' + generatingTopic,
-      content: generatingContent,
-      contentCn: contentCn,
-      contentEn: contentEn,
+      content: generatingContentMixed,
+      contentCn: generatingContentCn,
+      contentEn: generatingContentEn,
       words: words,
       source: 'ai_generated',
       createdAt: Date.now()
     };
 
-    console.log('[read] saving article:', article);
-
     try {
-      // 先保存到 ai_generated 集合
       const { saveArticle } = require('../../modules/article/index.js');
       const res = await saveArticle(article);
-      console.log('[read] saveArticle res:', res);
 
-      // 获取文章ID添加到收藏
       const articleId = res?.id || res?._id;
       if (articleId) {
         const { addFavorite } = require('../../modules/progress/index.js');
         await addFavorite(openid, articleId);
-        console.log('[read] added to favorites:', articleId);
       }
 
       wx.showToast({ title: '保存成功', icon: 'none' });
-      // 清理全局数据
       const app = getApp();
-      app.globalData.generatingContent = '';
+      app.globalData.generatingContentMixed = '';
+      app.globalData.generatingContentCn = '';
+      app.globalData.generatingContentEn = '';
       app.globalData.generatingTopic = '';
       app.globalData.generatingCategory = '';
       app.globalData.generatingDone = false;
-      // 跳转到我的页面
       setTimeout(function() {
         wx.switchTab({ url: '/pages/my/index' });
       }, 1500);
@@ -302,18 +270,17 @@ Page({
     }
   },
 
-  // 取消生成
   onCancelTap() {
-    // 清理全局数据
     const app = getApp();
-    app.globalData.generatingContent = '';
+    app.globalData.generatingContentMixed = '';
+    app.globalData.generatingContentCn = '';
+    app.globalData.generatingContentEn = '';
     app.globalData.generatingTopic = '';
     app.globalData.generatingCategory = '';
     app.globalData.generatingDone = false;
     wx.navigateBack();
   },
 
-  // 提取单词列表（支持新格式 career(事业)）
   extractWords(content) {
     const words = [];
     const regex = /([A-Za-z\s]+)\(([^)]+)\)/g;
@@ -325,6 +292,5 @@ Page({
       }
     }
     return words;
-  },
-
-  });
+  }
+});

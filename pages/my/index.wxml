@@ -12,7 +12,7 @@
       <text class="member-expire">到期时间: {{formatDate(memberStatus.expireTime)}}</text>
     </view>
     <view class="member-tip" wx:else>
-      <text>激活会员，解锁无限AI生成</text>
+      <text>激活会员，解锁更多故事单词</text>
     </view>
   </view>
 

@@ -9,7 +9,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#3CAB6E",
-    "navigationBarTitleText": "AI短文记单词",
+    "navigationBarTitleText": "看故事背单词",
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
